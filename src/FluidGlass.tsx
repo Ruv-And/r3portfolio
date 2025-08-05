@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unknown-property */
 import * as THREE from "three";
-import { useRef, useState, useEffect, memo, } from "react";
+import { useRef, useState, useEffect, memo } from "react";
 import type { ReactNode } from 'react';
 import {
     Canvas,
@@ -68,15 +68,18 @@ export default function FluidGlass({
 
 
     return (
-        <Canvas camera={{ position: [0, 0, 20], fov: 15 }} gl={{ alpha: true }}>
-            <ScrollControls damping={0.2} pages={3} distance={0.4}>
-                {mode === "bar" && <NavItems items={navItems as NavItem[]} />}
-                <Wrapper modeProps={modeProps}>
-                    <SceneContent />
-                    <Preload />
-                </Wrapper>
-            </ScrollControls>
-        </Canvas>
+        <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
+            <Canvas camera={{ position: [0, 0, 20], fov: 15 }} gl={{ alpha: true }}>
+                <ScrollControls damping={0.2} pages={3} distance={0.4}>
+                    {mode === "bar" && <NavItems items={navItems as NavItem[]} />}
+                    <Wrapper modeProps={modeProps}>
+                        <SceneContent />
+                        <Preload />
+                    </Wrapper>
+                    {/* Remove the ScrollAwareOverlay since we're using Html directly */}
+                </ScrollControls>
+            </Canvas>
+        </div>
     );
 }
 
@@ -96,7 +99,18 @@ function SceneContent() {
             
             {/* University logo positioned to the right of the description */}
             
-            <SectionTypography text="Experience" size="medium" position={[0, -6, 8]} />
+            <SectionTypography text="Experience" size="medium" position={[0, -5.3, 8]} />
+            
+            {/* HTML overlay with tabs positioned between Experience and Skills */}
+            <Html 
+                position={[0, -6.5, 4]} 
+                center 
+                style={{ pointerEvents: 'none' }}
+                wrapperClass="html-wrapper"
+            >
+                <ExperienceTabs />
+            </Html>
+            
             <SectionTypography text="Skills" size="medium" position={[0, -8, 8]} />
             <SectionTypography text="Projects" size="medium" position={[0, -10, 8]} />
             <Images
@@ -112,8 +126,8 @@ function SceneContent() {
                         url: "assets/images/golconda.png"
                     },
                     {
-                        position: [0, -4, 12],
-                        scale: [2,1],
+                        position: [0, -4, 6],
+                        scale: [4,2],
                         url: "assets/images/uiuccampus.jpg"
                     },
                 ]}
@@ -388,6 +402,238 @@ function NavItems({ items }: { items: NavItem[] }) {
                 );
             })}
         </group>
+    );
+}
+
+
+// Interactive experience tabs component with fade-in transitions
+function ExperienceTabs() {
+    const [activeTab, setActiveTab] = useState<number | null>(0); // Start with first tab selected
+    const [fadeKey, setFadeKey] = useState(0); // Key to trigger re-animation
+
+    const tabs = [
+        {
+            title: "Internship",
+            content: {
+                title: "Software Development Intern",
+                company: "GEICO",
+                duration: "June 2025 - Present",
+                description: [
+                    "Designed and built an internal Product Development Lifecycle (PDLC) orchestration platform using Figma, Django, GraphQL, PostgreSQL, and React to streamline developer workflows and accelerate project creation across a team of 3500+ engineers",
+                    "Developed a REST API aligned with internal company procedures, incorporating Shift Left principles to reduce 27% of developer bottlenecks through earlier reviews, testing, and standardized processes",
+                    "Integrated communication and automation features using Azure DevOps, Slack, and Office 365 APIs, enabling DevOps ticket generation and improving cross-team visibility",
+                    "Implemented LLM-based risk categorization with Google Gemini API to proactively flag high-risk projects and enhance product creation planning"
+                ]
+            }
+        },
+        {
+            title: "Research",
+            content: {
+                title: "Research Assistant",
+                company: "University Lab",
+                duration: "Fall 2023 - Present",
+                description: [
+                    "Conducted research on machine learning algorithms and data analysis",
+                    "Published findings in academic conferences",
+                    "Collaborated with graduate students on deep learning projects"
+                ]
+            }
+        },
+        {
+            title: "Projects",
+            content: {
+                title: "Personal Projects",
+                company: "Independent",
+                duration: "2023 - Present",
+                description: "Built various web applications and mobile apps using modern technologies. Focused on user experience and performance optimization."
+            }
+        }
+    ];
+
+    // Helper function to render description (string or bullet points)
+    const renderDescription = (description: string | string[]) => {
+        if (Array.isArray(description)) {
+            return (
+                <ul style={{ 
+                    margin: "1rem 0 0 0", 
+                    paddingLeft: "1.2rem",
+                    lineHeight: "1.6",
+                    fontSize: "0.95rem"
+                }}>
+                    {description.map((bullet, index) => (
+                        <li key={index} style={{ marginBottom: "0.5rem" }}>
+                            {bullet}
+                        </li>
+                    ))}
+                </ul>
+            );
+        }
+        return (
+            <p style={{ 
+                margin: "1rem 0 0 0", 
+                lineHeight: "1.6",
+                fontSize: "0.95rem"
+            }}>
+                {description}
+            </p>
+        );
+    };
+
+    // CSS animation keyframes and global fixes
+    const fadeInStyle = `
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .html-wrapper {
+            pointer-events: none !important;
+        }
+        
+        .html-wrapper > * {
+            pointer-events: auto;
+        }
+    `;
+
+    return (
+        <>
+            <style dangerouslySetInnerHTML={{ __html: fadeInStyle }} />
+            <div
+                style={{
+                    display: "flex",
+                    width: "60vw",
+                    maxWidth: "1400px",
+                    height: "300px",
+                    fontFamily: "sans-serif",
+                    gap: "0rem",
+                    pointerEvents: "none", // Disable pointer events on container to allow scrolling
+                }}
+            >
+                {/* Left side - Tabs */}
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "1rem",
+                        minWidth: "200px",
+                        pointerEvents: "auto", // Enable pointer events only on the tabs container
+                    }}
+                >
+                    {tabs.map((tab, index) => (
+                        <button
+                            key={index}
+                            onClick={() => {
+                                const newTab = activeTab === index ? null : index;
+                                setActiveTab(newTab);
+                                if (newTab !== null) {
+                                    setFadeKey(prev => prev + 1); // Trigger new animation
+                                }
+                            }}
+                            style={{
+                                padding: "1rem 1.5rem",
+                                background: activeTab === index 
+                                    ? "rgba(82, 39, 255, 0.8)" 
+                                    : "rgba(40, 40, 60, 0.7)",
+                                color: "#fff",
+                                border: activeTab === index 
+                                    ? "2px solid #5227ff" 
+                                    : "2px solid transparent",
+                                borderRadius: "12px",
+                                cursor: "pointer",
+                                fontSize: "1rem",
+                                fontWeight: activeTab === index ? "600" : "400",
+                                transition: "all 0.3s ease",
+                                textAlign: "left",
+                                boxShadow: activeTab === index 
+                                    ? "0 4px 20px rgba(82, 39, 255, 0.3)" 
+                                    : "0 2px 10px rgba(0, 0, 0, 0.2)",
+                                transform: activeTab === index ? "translateX(5px)" : "translateX(0)",
+                            }}
+                            onMouseEnter={(e) => {
+                                if (activeTab !== index) {
+                                    e.currentTarget.style.background = "rgba(60, 60, 80, 0.8)";
+                                    e.currentTarget.style.transform = "translateX(3px)";
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (activeTab !== index) {
+                                    e.currentTarget.style.background = "rgba(40, 40, 60, 0.7)";
+                                    e.currentTarget.style.transform = "translateX(0)";
+                                }
+                            }}
+                        >
+                            {tab.title}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Right side - Content */}
+                <div
+                    style={{
+                        flex: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        minHeight: "100%",
+                        pointerEvents: "none", // Enable pointer events for content area
+                    }}
+                >
+                    {activeTab !== null && (
+                        <div
+                            key={fadeKey} // Use key to force re-mount and re-animate
+                            style={{
+                                background: "rgba(40, 40, 60, 0.9)",
+                                borderRadius: "16px",
+                                padding: "2rem",
+                                color: "#fff",
+                                border: "2px solid #5227ff",
+                                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
+                                animation: "fadeIn 0.5s ease-in-out",
+                                width: "100%",
+                                maxWidth: "700px",
+                                overflowY: "auto",
+                            }}
+                        >
+                            <h3 style={{ 
+                                margin: "0 0 0.5rem 0", 
+                                color: "#5227ff",
+                                fontSize: "1.5rem",
+                                fontWeight: "600"
+                            }}>
+                                {tabs[activeTab].content.title}
+                            </h3>
+                            <p style={{ 
+                                margin: "0 0 0.5rem 0", 
+                                color: "#ccc",
+                                fontSize: "1rem",
+                                fontWeight: "500"
+                            }}>
+                                {tabs[activeTab].content.company} • {tabs[activeTab].content.duration}
+                            </p>
+                            {renderDescription(tabs[activeTab].content.description)}
+                        </div>
+                    )}
+                    {activeTab === null && (
+                        <div
+                            style={{
+                                color: "#999",
+                                fontSize: "1.1rem",
+                                textAlign: "center",
+                                fontStyle: "italic",
+                            }}
+                        >
+                            Select a tab to view details
+                        </div>
+                    )}
+                </div>
+            </div>
+        </>
     );
 }
 
