@@ -19,7 +19,6 @@ import {
     ScrollControls,
     MeshTransmissionMaterial,
     Text,
-    Html,
 } from "@react-three/drei";
 
 import { easing } from "maath";
@@ -27,6 +26,7 @@ import { easing } from "maath";
 //components
 import SectionTypography from "./components/SectionTypography";
 import Images from "./components/Images";
+import ExperienceSection from "./components/ExperienceSection";
 
 // Defines the mode types and props
 type Mode = "lens" | "bar" | "cube";
@@ -88,6 +88,11 @@ function SceneContent() {
     
     return (
         <Scroll>
+            {/* Add some lighting for 3D materials */}
+            <ambientLight intensity={0.5} />
+            <pointLight position={[10, 10, 10]} intensity={1} />
+            <pointLight position={[-10, -10, 10]} intensity={0.5} />
+            
             <SectionTypography text="Aruv Dand" size="large" position={[0, 0, 12]} />
             <SectionTypography text="About Me" size="medium" position={[0, -2, 8]} />
             <SectionTypography text={[
@@ -101,15 +106,8 @@ function SceneContent() {
             
             <SectionTypography text="Experience" size="medium" position={[0, -5.3, 8]} />
             
-            {/* HTML overlay with tabs positioned between Experience and Skills */}
-            <Html 
-                position={[0, -6.5, 4]} 
-                center 
-                style={{ pointerEvents: 'none' }}
-                wrapperClass="html-wrapper"
-            >
-                <ExperienceTabs />
-            </Html>
+            {/* 3D Experience Section with interactive buttons and cards */}
+            <ExperienceSection position={[0, -6.5, 2]} />
             
             <SectionTypography text="Skills" size="medium" position={[0, -8, 8]} />
             <SectionTypography text="Projects" size="medium" position={[0, -10, 8]} />
