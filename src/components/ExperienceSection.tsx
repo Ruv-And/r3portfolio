@@ -28,42 +28,42 @@ export default function ExperienceSection({ position = [0, -6.5, 2] }: Experienc
     
     const experienceData: ExperienceData[] = [
         {
-            title: "Internship",
+            title: "GEICO",
             content: {
                 title: "Software Development Intern",
                 company: "GEICO",
                 duration: "June 2025 - Present",
                 description: [
-                    "Designed and built an internal PDLC orchestration platform using Figma, Django, GraphQL, PostgreSQL, and React/TypeScript to streamline developer workflows and accelerate project creation across a team of 3500+ engineers",
-                    "Developed a REST API aligned with internal company procedures, incorporating Shift Left principles to reduce 27% of developer bottlenecks through earlier reviews, testing, and standardized processes",
-                    "Integrated communication and automation features using Azure DevOps, Slack, and Office 365 APIs, enabling DevOps ticket generation and improving cross-team visibility",
-                    "Implemented LLM-based risk categorization with Google Gemini API to proactively flag high-risk projects and enhance product creation planning"
+                    "Designed and built an internal PDLC orchestration platform using Figma, Django, GraphQL, PostgreSQL, and React/TypeScript to streamline developer workflows and accelerate project creation across a team of 3500+ engineers.",
+                    "Developed a REST API aligned with internal company procedures, incorporating Shift Left principles to reduce 27% of developer bottlenecks through earlier reviews, testing, and standardized processes.",
+                    "Integrated communication and automation features using Azure DevOps, Slack, and Office 365 APIs, enabling DevOps ticket generation and improving cross-team visibility.",
+                    "Implemented LLM-based risk categorization with Google Gemini API to proactively flag high-risk projects and enhance product creation planning."
                 ]
             }
         },
         {
-            title: "Research",
+            title: "E42.ai",
             content: {
-                title: "Research Assistant",
-                company: "University Lab",
-                duration: "Fall 2023 - Present",
+                title: "Software Intern",
+                company: "E42.ai",
+                duration: "June 2024 - August 2024",
                 description: [
-                    "Conducted research on machine learning algorithms",
-                    "Published findings in academic conferences",
-                    "Collaborated with graduate students on deep learning projects"
+                    "Utilized the company's platform to configure virtual AI workers for automating human resource processes.",
+                    "Tested the company’s generative AI model for accuracy using training documents and refined its responses.",
+                    "Built an MLOps pipeline simulating natural language-to-SQL with LLMs; generated fake employee datasets (e.g. name, address, phone number, etc.) with Python/Faker, stored in MySQL, used ChromaDB for SQL retrieval, and ChatDB to convert query results into English answers."
                 ]
             }
         },
         {
-            title: "Projects",
+            title: "Bear Paddle",
             content: {
-                title: "Personal Projects",
-                company: "Independent",
-                duration: "2023 - Present",
+                title: "Swimming Instructor",
+                company: "Bear Paddle Swim School",
+                duration: "June 2021 – August 2021",
                 description: [
-                    "Built various web applications and mobile apps",
-                    "Focused on user experience and performance optimization",
-                    "Used modern technologies like React, Node.js, and Three.js"
+                    "Taught life-saving swimming fundamentals to over 40 children aged 6 months to 13 years, promoting water safety and confidence in the pool.",
+                    "Provided personalized instruction and managed the safety of multiple children simultaneously, ensuring a secure and supportive learning environment.",
+                    "Effectively kept children engaged and entertained during lessons, contributing to improved customer retention and positive feedback from parents."
                 ]
             }
         }
@@ -100,7 +100,7 @@ export default function ExperienceSection({ position = [0, -6.5, 2] }: Experienc
             </group>
 
             {/* Content Card */}
-            <group ref={cardRef} position={[1.5, -0.5, 0]}>
+            <group ref={cardRef} position={[1., -0.5, 0]}>
                 <ContentCard
                     data={experienceData[activeTab].content}
                     isVisible={true}
@@ -123,7 +123,7 @@ interface TabButtonProps {
 
 function TabButton({ title, position, isActive, isHovered, onClick, onHover, onUnhover }: TabButtonProps) {
     const meshRef = useRef<THREE.Mesh>(null);
-    const scale = isActive ? 1.05 : isHovered ? 1.02 : 1;
+    const scale = isActive ? 1.1 : isHovered ? 1.05 : 1;
     
     useFrame((_state, delta) => {
         if (meshRef.current) {
@@ -180,11 +180,25 @@ function ContentCard({ data, isVisible }: ContentCardProps) {
     const textGroupRef = useRef<THREE.Group>(null);
     
     // Calculate dynamic card height based on content
-    const baseHeight = 1.8; // Minimum height for title, company, duration
-    const lineHeight = 0.25; // Height per description line
-    const padding = 0.4; // Top and bottom padding
-    const dynamicHeight = baseHeight + (data.description.length * lineHeight) + padding;
-    const cardWidth = 3.5; // Slightly wider for better text fit
+    const cardWidth = 3.5;
+    const maxTextWidth = cardWidth - 0.4; // Text width with padding
+    const fontSize = 0.08;
+    const baseLineHeight = 0.2; // Base height for single line
+    const characterWidth = fontSize * 0.3; // Approximate character width
+    const charactersPerLine = Math.floor(maxTextWidth / characterWidth);
+    
+    // Calculate how many lines each description point will take
+    const descriptionHeights = data.description.map(point => {
+        const textLength = point.length + 2; // +2 for bullet and space
+        const linesNeeded = Math.ceil(textLength / charactersPerLine);
+        return linesNeeded * baseLineHeight;
+    });
+    
+    // Calculate total height needed
+    const baseHeight = 1; // Height for title, company, duration
+    const totalDescriptionHeight = descriptionHeights.reduce((sum, height) => sum + height, 0);
+    const padding = 0.4;
+    const dynamicHeight = baseHeight + totalDescriptionHeight + padding;
     
     useFrame((state, delta) => {
         if (meshRef.current) {
@@ -251,20 +265,26 @@ function ContentCard({ data, isVisible }: ContentCardProps) {
                 </Text>
                 
                 {/* Description Points - Show all without truncation */}
-                {data.description.map((point, index) => (
-                    <Text
-                        key={index}
-                        position={[-(cardWidth / 2) + 0.2, (dynamicHeight / 2) - 1.0 - index * lineHeight, 0]}
-                        fontSize={0.08}
-                        color="white"
-                        anchorX="left"
-                        anchorY="middle"
-                        font="/assets/fonts/figtreeblack.ttf"
-                        maxWidth={cardWidth - 0.4}
-                    >
-                        • {point}
-                    </Text>
-                ))}
+                {data.description.map((point, index) => {
+                    // Calculate cumulative position for this item
+                    const previousHeights = descriptionHeights.slice(0, index).reduce((sum, height) => sum + height, 0);
+                    const yPosition = (dynamicHeight / 2) - 1.0 - previousHeights;
+                    
+                    return (
+                        <Text
+                            key={index}
+                            position={[-(cardWidth / 2) + 0.2, yPosition, 0]}
+                            fontSize={0.08}
+                            color="white"
+                            anchorX="left"
+                            anchorY="top"
+                            font="/assets/fonts/figtreeblack.ttf"
+                            maxWidth={cardWidth - 0.4}
+                        >
+                            • {point}
+                        </Text>
+                    );
+                })}
             </group>
         </group>
     );

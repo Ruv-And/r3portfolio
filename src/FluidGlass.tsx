@@ -104,13 +104,13 @@ function SceneContent() {
             
             {/* University logo positioned to the right of the description */}
             
-            <SectionTypography text="Experience" size="medium" position={[0, -5.3, 8]} />
+            <SectionTypography text="Experience" size="medium" position={[0, -5.8, 8]} />
             
             {/* 3D Experience Section with interactive buttons and cards */}
-            <ExperienceSection position={[0, -6.5, 2]} />
+            <ExperienceSection position={[0, -7.2, 6]} />
             
-            <SectionTypography text="Skills" size="medium" position={[0, -8, 8]} />
-            <SectionTypography text="Projects" size="medium" position={[0, -10, 8]} />
+            <SectionTypography text="Skills" size="medium" position={[0, -10, 8]} />
+            <SectionTypography text="Projects" size="medium" position={[0, -12, 8]} />
             <Images
                 images={[
                     {
@@ -124,7 +124,7 @@ function SceneContent() {
                         url: "assets/images/golconda.png"
                     },
                     {
-                        position: [0, -4, 6],
+                        position: [0, -4.3, 6],
                         scale: [4,2],
                         url: "assets/images/uiuccampus.jpg"
                     },
