@@ -27,6 +27,7 @@ import { easing } from "maath";
 import SectionTypography from "./components/SectionTypography";
 import Images from "./components/Images";
 import ExperienceSection from "./components/ExperienceSection";
+import SkillsCarousel3D from "./components/SkillsCarousel3D";
 
 // Defines the mode types and props
 type Mode = "lens" | "bar" | "cube";
@@ -70,7 +71,7 @@ export default function FluidGlass({
     return (
         <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
             <Canvas camera={{ position: [0, 0, 20], fov: 15 }} gl={{ alpha: true }}>
-                <ScrollControls damping={0.2} pages={3} distance={0.4}>
+                <ScrollControls damping={0.2} pages={4} distance={0.4}>
                     {mode === "bar" && <NavItems items={navItems as NavItem[]} />}
                     <Wrapper modeProps={modeProps}>
                         <SceneContent />
@@ -110,6 +111,7 @@ function SceneContent() {
             <ExperienceSection position={[0, -7.2, 6]} />
             
             <SectionTypography text="Skills" size="medium" position={[0, -10, 8]} />
+            <SkillsCarousel3D position={[0, -10.8, 6]} speed={0.5} />
             <SectionTypography text="Projects" size="medium" position={[0, -12, 8]} />
             <Images
                 images={[
@@ -632,58 +634,5 @@ function ExperienceTabs() {
                 </div>
             </div>
         </>
-    );
-}
-
-
-// Displays sections with user information
-// This is a placeholder for the Html overlay that can be used to display user information
-
-function Sections() {
-    return (
-        <div
-            style={{
-                width: "80vw",
-                margin: "0 auto",
-                color: "#fff",
-                fontFamily: "sans-serif",
-                zIndex: 9999,
-                pointerEvents: "auto",
-                background: "rgba(40,40,60,0.7)",
-                borderRadius: "16px",
-                padding: "2rem",
-                boxShadow: "0 4px 32px rgba(0,0,0,0.3)",
-                border: "2px solid #5227ff",
-            }}
-        >
-            {/* About Me Section */}
-            <section style={{ marginBottom: "3rem" }}>
-                <h2>About Me</h2>
-                <p>
-                    I am a computer science student.
-                </p>
-            </section>
-            {/* Experience Section */}
-            <section style={{ marginBottom: "3rem" }}>
-                <h2>Experience</h2>
-                <p>
-                    {/* Add your experience details here later */}
-                </p>
-            </section>
-            {/* Skills Section */}
-            <section style={{ marginBottom: "3rem" }}>
-                <h2>Skills</h2>
-                <p>
-                    {/* Add your skills here later */}
-                </p>
-            </section>
-            {/* Projects Section */}
-            <section style={{ marginBottom: "3rem" }}>
-                <h2>Projects</h2>
-                <p>
-                    {/* Add your projects here later */}
-                </p>
-            </section>
-        </div>
     );
 }
