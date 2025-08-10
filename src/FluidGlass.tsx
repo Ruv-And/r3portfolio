@@ -111,8 +111,10 @@ function SceneContent() {
             <ExperienceSection position={[0, -7.2, 6]} />
             
             <SectionTypography text="Skills" size="medium" position={[0, -10, 8]} />
-            <SkillsCarousel3D position={[0, -10.8, 6]} speed={0.5} />
+            <SkillsCarousel3D position={[0, -11, 6]} speed={1} />
+
             <SectionTypography text="Projects" size="medium" position={[0, -12, 8]} />
+
             <Images
                 images={[
                     {
