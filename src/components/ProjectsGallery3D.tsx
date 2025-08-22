@@ -21,19 +21,19 @@ interface ProjectsGallery3DProps {
 
 const defaultProjects: ProjectData[] = [
     {
-        title: "PDLC Orchestration Platform",
-        description: "Internal platform built for GEICO with Django, GraphQL, PostgreSQL, and React to streamline developer workflows across 3500+ engineers. Features LLM-based risk categorization and automated DevOps integration.",
-        technologies: ["Django", "GraphQL", "PostgreSQL", "React", "TypeScript", "Azure"],
-        imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=400&fit=crop",
+        title: "Snipiddy",
+        description: "Sign in and enter your dietary restrictions, such as food allergies or irritating ingredients, along with any diets or price restrictions. Then, snap a photo of your menu and let an AI-powered scanner take over. Within seconds, it identifies potential allergens and offers dietary recommendations tailored to your needs, helping you make confident, informed food choices!",
+        technologies: ["Typescript", "SQL", "NextJS", "Tailwind", "PostgreSQL"],
+        imageUrl: "/assets/projects/snippidy.png",
         // githubUrl: "https://github.com/yourusername/pdlc-platform",
         // liveUrl: "https://internal-pdlc.geico.com",
         featured: false,
     },
     {
-        title: "MLOps Pipeline - NL to SQL",
-        description: "Built an MLOps pipeline simulating natural language-to-SQL conversion using LLMs. Generated fake employee datasets with Python/Faker, integrated ChromaDB for SQL retrieval, and ChatDB for natural language responses.",
-        technologies: ["Python", "ChromaDB", "MySQL", "LLMs", "Docker", "MLOps"],
-        imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=400&fit=crop",
+        title: "Mileage Masters",
+        description: "My team's entry for the Business Professionals of America 2023 Website Design Team competition. A used car marketplace with cross-platform functionality, advanced payment calculators, and a contact form. This earned us first place nationally.",
+        technologies: ["JavaScript", "Bootstrap", "HTML", "CSS", "Sass", "PHPMailer"],
+        imageUrl: "/assets/projects/mileage-masters.png",
         // githubUrl: "https://github.com/yourusername/nl-to-sql-pipeline",
         featured: false,
     },
@@ -133,7 +133,7 @@ function ProjectCard({ project, position, isHovered, onHover, onUnhover }: Proje
     
     // Calculate total height needed
     const baseHeight = 1.5; // Height for image, title
-    const dynamicHeight = Math.max(2.7, baseHeight + descriptionHeight + techHeight + 0.2); // Reduced padding from 0.8 to 0.5
+    const dynamicHeight = Math.max(2.7, baseHeight + descriptionHeight + techHeight + 0.0); // Reduced padding from 0.8 to 0.5
 
     // Create texture (stabilized to prevent flickering)
     const texture = useMemo(() => {
@@ -301,7 +301,7 @@ function ProjectCard({ project, position, isHovered, onHover, onUnhover }: Proje
             </Text>
 
             {/* Technologies tags - Multi-line support */}
-            <group position={[0, (dynamicHeight / 2) - 1.8 - descriptionHeight , 0.12]}>
+            <group position={[0, (dynamicHeight / 2) - 1.5 - descriptionHeight , 0.12]}>
                 {project.technologies.map((tech, techIndex) => {
                     // Calculate position for multi-line layout
                     const tagsPerLine = 3;
