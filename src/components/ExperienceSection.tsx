@@ -1,7 +1,7 @@
 // 3D Experience Section with interactive buttons and animated cards
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Text, RoundedBox } from "@react-three/drei";
+import { Text } from "@react-three/drei";
 import * as THREE from "three";
 
 interface ExperienceData {
@@ -21,6 +21,8 @@ interface ExperienceSectionProps {
 export default function ExperienceSection({ position = [0, -6.5, 2] }: ExperienceSectionProps) {
     const [activeTab, setActiveTab] = useState<number>(0);
     const [hoveredTab, setHoveredTab] = useState<number | null>(null);
+    const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
+    const [animationTrigger, setAnimationTrigger] = useState<number>(0);
     
     // Refs for animations
     const cardRef = useRef<THREE.Group>(null);
@@ -78,7 +80,18 @@ export default function ExperienceSection({ position = [0, -6.5, 2] }: Experienc
     });
 
     const handleTabClick = (index: number) => {
-        setActiveTab(index);
+        if (index !== activeTab) {
+            setIsTransitioning(true);
+            // Start fade out
+            setTimeout(() => {
+                setActiveTab(index);
+                setAnimationTrigger(prev => prev + 1); // Trigger animation
+                // Allow new content to fade in
+                setTimeout(() => {
+                    setIsTransitioning(false);
+                }, 100);
+            }, 200);
+        }
     };
 
     return (
@@ -103,7 +116,9 @@ export default function ExperienceSection({ position = [0, -6.5, 2] }: Experienc
             <group ref={cardRef} position={[1., -0.5, 0]}>
                 <ContentCard
                     data={experienceData[activeTab].content}
-                    isVisible={true}
+                    isVisible={!isTransitioning}
+                    isTransitioning={isTransitioning}
+                    animationTrigger={animationTrigger}
                 />
             </group>
         </group>
@@ -173,11 +188,21 @@ function TabButton({ title, position, isActive, isHovered, onClick, onHover, onU
 interface ContentCardProps {
     data: ExperienceData['content'];
     isVisible: boolean;
+    isTransitioning?: boolean;
+    animationTrigger?: number;
 }
 
-function ContentCard({ data, isVisible }: ContentCardProps) {
+function ContentCard({ data, isVisible, isTransitioning = false, animationTrigger = 0 }: ContentCardProps) {
     const meshRef = useRef<THREE.Mesh>(null);
     const textGroupRef = useRef<THREE.Group>(null);
+    const [animationStartTime, setAnimationStartTime] = useState(0);
+    
+    // Reset animation ONLY when animationTrigger changes (i.e., on tab click)
+    useEffect(() => {
+        if (animationTrigger > 0) {
+            setAnimationStartTime(Date.now());
+        }
+    }, [animationTrigger]); // Only animationTrigger as dependency
     
     // Calculate dynamic card height based on content
     const cardWidth = 3.5;
@@ -200,22 +225,70 @@ function ContentCard({ data, isVisible }: ContentCardProps) {
     const padding = 0.4;
     const dynamicHeight = baseHeight + totalDescriptionHeight + padding;
     
-    useFrame((state, delta) => {
+    useFrame((_state, delta) => {
         if (meshRef.current) {
-            // Card entrance animation
-            const targetScale = isVisible ? 1 : 0;
-            meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), delta * 6);
+            // Card entrance animation with enhanced fade-in and bounce
+            const targetScale = isVisible && !isTransitioning ? 1 : 0;
+            const targetOpacity = isVisible && !isTransitioning ? 0.9 : 0;
+            
+            // Smooth scale transition with bounce effect
+            const elapsed = (Date.now() - animationStartTime) / 1000;
+            let scaleMultiplier = 1;
+            
+            if (isVisible && !isTransitioning && elapsed < 0.5) {
+                // Add bounce effect during entrance
+                const bounceProgress = elapsed / 0.5;
+                scaleMultiplier = 1 + Math.sin(bounceProgress * Math.PI) * 0.1;
+            }
+            
+            const finalScale = targetScale * scaleMultiplier;
+            meshRef.current.scale.lerp(
+                new THREE.Vector3(finalScale, finalScale, finalScale), 
+                delta * 8
+            );
+            
+            // Fade card background
+            if (meshRef.current.material && 'opacity' in meshRef.current.material) {
+                const material = meshRef.current.material as THREE.MeshStandardMaterial;
+                material.opacity = THREE.MathUtils.lerp(material.opacity, targetOpacity, delta * 8);
+            }
         }
         
-        if (textGroupRef.current && isVisible) {
-            // Text fade-in animation
+        if (textGroupRef.current && isVisible && !isTransitioning) {
+            // Enhanced text fade-in animation with staggered timing
+            const elapsed = (Date.now() - animationStartTime) / 1000; // Convert to seconds
+            
             textGroupRef.current.children.forEach((child, index) => {
                 const text = child as THREE.Mesh;
                 if (text.material && 'opacity' in text.material) {
                     const material = text.material as THREE.MeshBasicMaterial;
-                    const delay = index * 0.1;
-                    const progress = Math.max(0, Math.min(1, (state.clock.elapsedTime - delay) * 2));
-                    material.opacity = progress;
+                    const delay = index * 0.15; // Increased delay for more dramatic effect
+                    const animationDuration = 0.8; // Duration of fade-in
+                    const progress = Math.max(0, Math.min(1, (elapsed - delay) / animationDuration));
+                    
+                    // Smooth easing function for better animation feel
+                    const easedProgress = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
+                    material.opacity = easedProgress;
+                    
+                    // Add slight scale animation to text with bounce
+                    const baseScale = progress > 0 ? 1 : 0.8;
+                    let textScale = baseScale;
+                    
+                    if (progress > 0 && progress < 1) {
+                        // Add subtle bounce to text
+                        textScale = baseScale + Math.sin(progress * Math.PI) * 0.05;
+                    }
+                    
+                    text.scale.lerp(new THREE.Vector3(textScale, textScale, textScale), delta * 10);
+                }
+            });
+        } else if (textGroupRef.current && (isTransitioning || !isVisible)) {
+            // Fade out text quickly when transitioning
+            textGroupRef.current.children.forEach((child) => {
+                const text = child as THREE.Mesh;
+                if (text.material && 'opacity' in text.material) {
+                    const material = text.material as THREE.MeshBasicMaterial;
+                    material.opacity = THREE.MathUtils.lerp(material.opacity, 0, delta * 40);
                 }
             });
         }
@@ -249,6 +322,7 @@ function ContentCard({ data, isVisible }: ContentCardProps) {
                     outlineColor="#000"
                     outlineOpacity={0.5}
                 >
+                    <meshBasicMaterial transparent opacity={0} />
                     {data.title}
                 </Text>
                 
@@ -261,6 +335,7 @@ function ContentCard({ data, isVisible }: ContentCardProps) {
                     anchorY="middle"
                     font="/assets/fonts/figtreeblack.ttf"
                 >
+                    <meshBasicMaterial transparent opacity={0} />
                     {data.company} • {data.duration}
                 </Text>
                 
@@ -281,6 +356,7 @@ function ContentCard({ data, isVisible }: ContentCardProps) {
                             font="/assets/fonts/figtreeblack.ttf"
                             maxWidth={cardWidth - 0.4}
                         >
+                            <meshBasicMaterial transparent opacity={0} />
                             • {point}
                         </Text>
                     );

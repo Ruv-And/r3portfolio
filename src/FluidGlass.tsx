@@ -65,7 +65,7 @@ export default function FluidGlass({
             { label: "Experience", link: "" },
             { label: "Skills", link: "" },
             { label: "Projects", link: "" },
-            { label: "Connect", link: "" },
+            // { label: "Connect", link: "" },
         ],
         ...modeProps
     } = rawOverrides;
@@ -321,7 +321,7 @@ function NavItems({ items }: { items: NavItem[] }) {
         "Experience": 0.35,
         "Skills": 0.45,
         "Projects": 0.75,
-        "Connect": 0.95,
+        // "Connect": 0.95,
     };
 
     const DEVICE = {
