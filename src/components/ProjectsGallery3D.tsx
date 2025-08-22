@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unknown-property */
 import { useRef, useState, Suspense, useMemo } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useLoader } from "@react-three/fiber";
 import { Text, RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -33,7 +33,7 @@ const defaultProjects: ProjectData[] = [
         title: "Mileage Masters",
         description: "My team's entry for the Business Professionals of America 2023 Website Design Team competition. A used car marketplace with cross-platform functionality, advanced payment calculators, and a contact form. This earned us first place nationally.",
         technologies: ["JavaScript", "Bootstrap", "HTML", "CSS", "Sass", "PHPMailer"],
-        imageUrl: "/assets/projects/mileage-masters.png",
+        imageUrl: "/assets/projects/mileagemasters.png",
         // githubUrl: "https://github.com/yourusername/nl-to-sql-pipeline",
         featured: false,
     },
@@ -115,6 +115,9 @@ interface ProjectCardProps {
 function ProjectCard({ project, position, isHovered, onHover, onUnhover }: ProjectCardProps) {
     const cardRef = useRef<THREE.Group>(null);
     const imageRef = useRef<THREE.Mesh>(null);
+    const [imageTexture, setImageTexture] = useState<THREE.Texture | null>(null);
+    const [imageError, setImageError] = useState<boolean>(false);
+    const [imageAspectRatio, setImageAspectRatio] = useState<number>(16/9); // Default aspect ratio
 
     // Calculate dynamic card height based on content
     const cardWidth = 2;
@@ -135,15 +138,61 @@ function ProjectCard({ project, position, isHovered, onHover, onUnhover }: Proje
     const baseHeight = 1.5; // Height for image, title
     const dynamicHeight = Math.max(2.7, baseHeight + descriptionHeight + techHeight + 0.0); // Reduced padding from 0.8 to 0.5
 
-    // Create texture (stabilized to prevent flickering)
+    // Calculate image dimensions maintaining aspect ratio
+    const maxImageWidth = 1.7;
+    const maxImageHeight = 0.9;
+    let imageWidth = maxImageWidth;
+    let imageHeight = maxImageHeight;
+
+    // Adjust dimensions to maintain aspect ratio
+    if (imageAspectRatio > maxImageWidth / maxImageHeight) {
+        // Image is wider - fit to width
+        imageHeight = maxImageWidth / imageAspectRatio;
+    } else {
+        // Image is taller - fit to height
+        imageWidth = maxImageHeight * imageAspectRatio;
+    }
+
+    // Load actual image texture
     const texture = useMemo(() => {
+        const loader = new THREE.TextureLoader();
+        
+        // Try to load the actual image first
+        if (project.imageUrl && !imageError) {
+            loader.load(
+                project.imageUrl,
+                (loadedTexture) => {
+                    loadedTexture.flipY = true;
+                    // Improve image quality with better filtering
+                    loadedTexture.magFilter = THREE.LinearFilter;
+                    loadedTexture.minFilter = THREE.LinearMipMapLinearFilter;
+                    loadedTexture.anisotropy = 16; // Maximum anisotropy for crisp images
+                    loadedTexture.generateMipmaps = true;
+                    
+                    // Calculate and set aspect ratio from the loaded image
+                    const img = loadedTexture.image;
+                    if (img && img.width && img.height) {
+                        setImageAspectRatio(img.width / img.height);
+                    }
+                    
+                    setImageTexture(loadedTexture);
+                },
+                undefined,
+                (error) => {
+                    console.warn(`Failed to load image: ${project.imageUrl}`, error);
+                    setImageError(true);
+                }
+            );
+        }
+
+        // Create fallback canvas texture with higher resolution
         const canvas = document.createElement('canvas');
-        canvas.width = 512;
-        canvas.height = 256;
+        canvas.width = 1024; // Increased from 512 for better quality
+        canvas.height = 512; // Increased from 256 for better quality
         const ctx = canvas.getContext('2d')!;
 
         // Create gradient based on project type
-        const gradient = ctx.createLinearGradient(0, 0, 512, 256);
+        const gradient = ctx.createLinearGradient(0, 0, 1024, 512);
         if (project.featured) {
             gradient.addColorStop(0, '#5227ff');
             gradient.addColorStop(1, '#8b5cf6');
@@ -152,25 +201,29 @@ function ProjectCard({ project, position, isHovered, onHover, onUnhover }: Proje
             gradient.addColorStop(1, '#606080');
         }
         ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, 512, 256);
+        ctx.fillRect(0, 0, 1024, 512);
 
-        // Add project title
+        // Add project title with higher resolution
         ctx.fillStyle = 'white';
-        ctx.font = 'bold 28px Arial';
+        ctx.font = 'bold 56px Arial'; // Doubled font size for higher resolution
         ctx.textAlign = 'center';
         ctx.shadowColor = 'rgba(0,0,0,0.5)';
-        ctx.shadowBlur = 4;
-        ctx.fillText(project.title, 256, 140);
+        ctx.shadowBlur = 8; // Increased shadow blur
+        ctx.fillText(project.title, 512, 280);
 
-        // Add tech stack indicator
-        ctx.font = '16px Arial';
+        // Add tech stack indicator with higher resolution
+        ctx.font = '32px Arial'; // Doubled font size
         ctx.fillStyle = '#cccccc';
-        ctx.fillText(project.technologies.slice(0, 3).join(' • '), 256, 180);
+        ctx.fillText(project.technologies.slice(0, 3).join(' • '), 512, 360);
 
         const canvasTexture = new THREE.CanvasTexture(canvas);
         canvasTexture.needsUpdate = true;
+        // Apply same quality settings to canvas texture
+        canvasTexture.magFilter = THREE.LinearFilter;
+        canvasTexture.minFilter = THREE.LinearMipMapLinearFilter;
+        canvasTexture.generateMipmaps = true;
         return canvasTexture;
-    }, [project.title, project.featured, project.technologies]);
+    }, [project.title, project.featured, project.technologies, project.imageUrl, imageError]);
 
     useFrame((state, delta) => {
         if (cardRef.current) {
@@ -234,9 +287,9 @@ function ProjectCard({ project, position, isHovered, onHover, onUnhover }: Proje
                 position={[0, (dynamicHeight / 2) - 0.7, 0.06]}
                 onClick={handleCardClick}
             >
-                <planeGeometry args={[1.7, 0.9]} />
+                <planeGeometry args={[imageWidth, imageHeight]} />
                 <meshBasicMaterial
-                    map={texture}
+                    map={imageTexture || texture}
                     transparent
                     opacity={0.8}
                 />
