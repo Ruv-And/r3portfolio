@@ -317,10 +317,10 @@ function NavItems({ items }: { items: NavItem[] }) {
     // Map each nav item to a scroll offset (0 = top, 1 = bottom)
     // Adjust these offsets to match your SectionTypography positions/pages
     const sectionOffsets = {
-        "About Me": 0.15,
-        "Experience": 0.35,
-        "Skills": 0.45,
-        "Projects": 0.75,
+        "About Me": 0.094,
+        "Experience": 0.214,
+        "Skills": 0.346,
+        "Projects": 0.419,
         // "Connect": 0.95,
     };
 
