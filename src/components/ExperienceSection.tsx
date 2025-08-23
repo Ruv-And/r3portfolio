@@ -173,7 +173,7 @@ function TabButton({ title, position, isActive, isHovered, onClick, onHover, onU
                 color="white"
                 anchorX="center"
                 anchorY="middle"
-                font="/assets/fonts/figtreeblack.ttf"
+                font="./assets/fonts/figtreeblack.ttf"
                 outlineWidth={0.005}
                 outlineColor="#000"
                 outlineOpacity={0.5}
@@ -317,7 +317,7 @@ function ContentCard({ data, isVisible, isTransitioning = false, animationTrigge
                     color="#5227ff"
                     anchorX="center"
                     anchorY="middle"
-                    font="/assets/fonts/figtreeblack.ttf"
+                    font="./assets/fonts/figtreeblack.ttf"
                     outlineWidth={0.005}
                     outlineColor="#000"
                     outlineOpacity={0.5}
@@ -333,7 +333,7 @@ function ContentCard({ data, isVisible, isTransitioning = false, animationTrigge
                     color="#cccccc"
                     anchorX="center"
                     anchorY="middle"
-                    font="/assets/fonts/figtreeblack.ttf"
+                    font="./assets/fonts/figtreeblack.ttf"
                 >
                     <meshBasicMaterial transparent opacity={0} />
                     {data.company} • {data.duration}
@@ -353,7 +353,7 @@ function ContentCard({ data, isVisible, isTransitioning = false, animationTrigge
                             color="white"
                             anchorX="left"
                             anchorY="top"
-                            font="/assets/fonts/figtreeblack.ttf"
+                            font="./assets/fonts/figtreeblack.ttf"
                             maxWidth={cardWidth - 0.4}
                         >
                             <meshBasicMaterial transparent opacity={0} />

@@ -262,7 +262,7 @@ const ModeWrapper = memo(function ModeWrapper({
 function Lens({ modeProps, ...p }: { modeProps?: ModeProps } & MeshProps) {
     return (
         <ModeWrapper
-            glb="/assets/3d/lens.glb"
+            glb="./assets/3d/lens.glb"
             geometryKey="Cylinder"
             followPointer
             modeProps={modeProps}
@@ -274,7 +274,7 @@ function Lens({ modeProps, ...p }: { modeProps?: ModeProps } & MeshProps) {
 function Cube({ modeProps, ...p }: { modeProps?: ModeProps } & MeshProps) {
     return (
         <ModeWrapper
-            glb="/assets/3d/cube.glb"
+            glb="./assets/3d/cube.glb"
             geometryKey="Cube"
             followPointer
             modeProps={modeProps}
@@ -296,7 +296,7 @@ function Bar({ modeProps = {}, ...p }: { modeProps?: ModeProps } & MeshProps) {
 
     return (
         <ModeWrapper
-            glb="/assets/3d/bar.glb"
+            glb="./assets/3d/bar.glb"
             geometryKey="Cube"
             lockToBottom
             followPointer={false}
@@ -392,7 +392,7 @@ function NavItems({ items }: { items: NavItem[] }) {
                         color="white"
                         anchorX="center"
                         anchorY="middle"
-                        font="/assets/fonts/figtreeblack.ttf"
+                        font="./assets/fonts/figtreeblack.ttf"
                         outlineWidth={isClicked ? 0.015 : 0} // Add outline on click
                         outlineBlur={isClicked ? "30%" : "20%"} // Increase blur on click
                         outlineColor={isClicked ? "#5227ff" : "#000"} // Change outline color on click

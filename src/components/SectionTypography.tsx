@@ -49,7 +49,7 @@ export default function SectionTypography({
                     <Text
                         key={index}
                         position={[position[0], position[1] - (index * fontSize * 1.2), position[2]]}
-                        font="/assets/fonts/figtreeblack.ttf"
+                        font="./assets/fonts/figtreeblack.ttf"
                         fontSize={fontSize}
                         letterSpacing={-0.05}
                         outlineWidth={0}
@@ -71,7 +71,7 @@ export default function SectionTypography({
     return (
         <Text
             position={position}
-            font="/assets/fonts/figtreeblack.ttf"
+            font="./assets/fonts/figtreeblack.ttf"
             fontSize={fontSize}
             letterSpacing={-0.05}
             outlineWidth={0}

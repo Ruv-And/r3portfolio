@@ -24,7 +24,7 @@ const defaultProjects: ProjectData[] = [
         title: "Snipiddy",
         description: "Sign in and enter your dietary restrictions, such as food allergies or irritating ingredients, along with any diets or price restrictions. Then, snap a photo of your menu and let an AI-powered scanner take over. Within seconds, it identifies potential allergens and offers dietary recommendations tailored to your needs, helping you make confident, informed food choices!",
         technologies: ["Typescript", "SQL", "NextJS", "Tailwind", "PostgreSQL"],
-        imageUrl: "/assets/projects/snippidy.png",
+        imageUrl: "./assets/projects/snippidy.png",
         // githubUrl: "https://github.com/yourusername/pdlc-platform",
         // liveUrl: "https://internal-pdlc.geico.com",
         featured: false,
@@ -33,7 +33,7 @@ const defaultProjects: ProjectData[] = [
         title: "Mileage Masters",
         description: "My team's entry for the Business Professionals of America 2023 Website Design Team competition. A used car marketplace with cross-platform functionality, advanced payment calculators, and a contact form. This earned us first place nationally.",
         technologies: ["JavaScript", "Bootstrap", "HTML", "CSS", "Sass", "PHPMailer"],
-        imageUrl: "/assets/projects/mileagemasters.png",
+        imageUrl: "./assets/projects/mileagemasters.png",
         // githubUrl: "https://github.com/yourusername/nl-to-sql-pipeline",
         featured: false,
     },
@@ -41,7 +41,7 @@ const defaultProjects: ProjectData[] = [
         title: "QLearning Snake Agent",
         description: "An agent trained using Q-Learning with Temporal Difference to learn how to play the classic Snake game. Also allows the user to customize the training parameters and play the game themselves.",
         technologies: ["Python", "Numpy"],
-        imageUrl: "/assets/projects/snake.png",
+        imageUrl: "./assets/projects/snake.png",
         // githubUrl: "https://github.com/yourusername/r3portfolio",
         // liveUrl: "https://aruv-portfolio.com",
         featured: false,
@@ -309,7 +309,7 @@ function ProjectCard({ project, position, isHovered, onHover, onUnhover }: Proje
                     color="white"
                     anchorX="center"
                     anchorY="middle"
-                    font="/assets/fonts/figtreeblack.ttf"
+                    font="./assets/fonts/figtreeblack.ttf"
                     outlineWidth={0.002}
                     outlineColor="#000"
                     outlineOpacity={0.4}
@@ -325,7 +325,7 @@ function ProjectCard({ project, position, isHovered, onHover, onUnhover }: Proje
                 color="#5227ff"
                 anchorX="center"
                 anchorY="middle"
-                font="/assets/fonts/figtreeblack.ttf"
+                font="./assets/fonts/figtreeblack.ttf"
                 maxWidth={1.8}
                 textAlign="center"
                 outlineWidth={0.003}
@@ -342,7 +342,7 @@ function ProjectCard({ project, position, isHovered, onHover, onUnhover }: Proje
                 color="white"
                 anchorX="center"
                 anchorY="top"
-                font="/assets/fonts/figtreeblack.ttf"
+                font="./assets/fonts/figtreeblack.ttf"
                 maxWidth={1.8}
                 textAlign="center"
                 lineHeight={1.2}
@@ -378,7 +378,7 @@ function ProjectCard({ project, position, isHovered, onHover, onUnhover }: Proje
                                 color="white"
                                 anchorX="center"
                                 anchorY="middle"
-                                font="/assets/fonts/figtreeblack.ttf"
+                                font="./assets/fonts/figtreeblack.ttf"
                                 outlineWidth={0.002}
                                 outlineColor="#000"
                                 outlineOpacity={0.3}
@@ -415,7 +415,7 @@ function ProjectCard({ project, position, isHovered, onHover, onUnhover }: Proje
                     color="white"
                     anchorX="center"
                     anchorY="middle"
-                    font="/assets/fonts/figtreeblack.ttf"
+                    font="./assets/fonts/figtreeblack.ttf"
                     onClick={handleGithubClick}
                     outlineWidth={0.002}
                     outlineColor="#000"
@@ -438,7 +438,7 @@ function ProjectCard({ project, position, isHovered, onHover, onUnhover }: Proje
                     color="white"
                     anchorX="center"
                     anchorY="middle"
-                    font="/assets/fonts/figtreeblack.ttf"
+                    font="./assets/fonts/figtreeblack.ttf"
                     outlineWidth={0.002}
                     outlineColor="#000"
                     outlineOpacity={0.3}

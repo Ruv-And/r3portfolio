@@ -20,13 +20,13 @@ const defaultSocials: SocialPlatform[] = [
     {
         name: "GitHub",
         url: "https://github.com/Ruv-And",
-        iconPath: "/assets/icons/github.png",
+        iconPath: "./assets/icons/github.png",
         color: "#333333"
     },
     {
         name: "LinkedIn",
         url: "https://linkedin.com/in/aruv-dand", 
-        iconPath: "/assets/icons/linkedin.png",
+        iconPath: "./assets/icons/linkedin.png",
         color: "#0077b5"
     }
 ];
