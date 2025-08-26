@@ -26,7 +26,7 @@ const defaultSocials: SocialPlatform[] = [
     {
         name: "LinkedIn",
         url: "https://linkedin.com/in/aruv-dand", 
-        iconPath: "./assets/icons/linkedin.png",
+        iconPath: "./assets/icons/linkedin.webp",
         color: "#0077b5"
     }
 ];
