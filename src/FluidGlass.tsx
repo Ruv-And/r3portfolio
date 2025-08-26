@@ -80,7 +80,8 @@ export default function FluidGlass({
                         <SceneContent />
                         <Preload />
                     </Wrapper>
-                    {/* Remove the ScrollAwareOverlay since we're using Html directly */}
+                    {/* Fixed Social Media Overlay */}
+                    <SocialsComponent3D />
                 </ScrollControls>
             </Canvas>
         </div>
@@ -120,11 +121,6 @@ function SceneContent() {
 
             {/* 3D Projects Gallery with interactive cards */}
             <ProjectsGallery3D position={[0, -14, 6]} />
-
-            <SectionTypography text="My Socials" size="medium" position={[0, -16.5, 8]} />
-
-            {/* 3D Social Media Component */}
-            <SocialsComponent3D position={[0, -18, 6]} />
 
             <Images
                 images={[

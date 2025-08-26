@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unknown-property */
 import { useRef, useState } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { RoundedBox, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -12,7 +12,6 @@ interface SocialPlatform {
 }
 
 interface SocialsComponent3DProps {
-    position?: [number, number, number];
     socials?: SocialPlatform[];
 }
 
@@ -21,7 +20,7 @@ const defaultSocials: SocialPlatform[] = [
         name: "GitHub",
         url: "https://github.com/Ruv-And",
         iconPath: "./assets/icons/github.png",
-        color: "#333333"
+        color: "#ffffff"
     },
     {
         name: "LinkedIn",
@@ -32,21 +31,38 @@ const defaultSocials: SocialPlatform[] = [
 ];
 
 export default function SocialsComponent3D({
-    position = [0, -16, 6],
     socials = defaultSocials
 }: SocialsComponent3DProps) {
     const groupRef = useRef<THREE.Group>(null);
     const [hoveredSocial, setHoveredSocial] = useState<number | null>(null);
+    const { viewport, camera } = useThree();
 
-    // Simple horizontal layout for just 2 cards
+    // Position the group in the bottom right corner of the screen
+    useFrame(() => {
+        if (!groupRef.current) return;
+        
+        const v = viewport.getCurrentViewport(camera, [0, 0, 15]);
+        
+        // Position in bottom right corner with some margin
+        const marginX = .35; // Distance from right edge
+        const marginY = 0.17; // Distance from bottom edge
+        
+        groupRef.current.position.set(
+            v.width / 2 - marginX,
+            -v.height / 2 + marginY,
+            15.1 // Slightly in front of other elements
+        );
+    });
+
+    // Horizontal layout for the cards side by side
     const getSocialPosition = (index: number): [number, number, number] => {
-        const spacing = 1.5;
-        const x = (index - 0.5) * spacing; // Center the two cards
+        const spacing = 0.25; // Horizontal spacing between cards
+        const x = (index - (socials.length - 1) / 2) * spacing; // Center the cards horizontally
         return [x, 0, 0];
     };
 
     return (
-        <group ref={groupRef} position={position}>
+        <group ref={groupRef} renderOrder={10}>
             {socials.map((social, index) => (
                 <SocialCard
                     key={index}
@@ -109,21 +125,21 @@ function SocialCard({ social, position, isHovered, onHover, onUnhover }: SocialC
             onClick={handleClick}
         >
             {/* Main card background */}
-            <RoundedBox args={[0.8, 0.8, 0.1]} radius={0.1}>
-                <meshStandardMaterial
+            <RoundedBox args={[0.2, 0.2, 0.04]} radius={0.04}>
+                <meshBasicMaterial
                     color={social.color}
-                    transparent
-                    opacity={0.9}
+                    transparent={social.name !== "GitHub"}
+                    opacity={social.name === "GitHub" ? 1.0 : 0.95}
                 />
             </RoundedBox>
 
             {/* Icon image */}
-            <mesh position={[0, 0, 0.06]}>
-                <planeGeometry args={[0.5, 0.5]} />
+            <mesh position={[0, 0, 0.025]}>
+                <planeGeometry args={[0.18, 0.18]} />
                 <meshBasicMaterial
                     map={iconTexture}
                     transparent
-                    opacity={1}
+                    opacity={1.0}
                 />
             </mesh>
         </group>
