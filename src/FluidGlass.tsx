@@ -321,7 +321,7 @@ function NavItems({ items }: { items: NavItem[] }) {
     };
 
     const DEVICE = {
-        mobile: { max: 639, spacing: 0.2, fontSize: 0.035 },
+        mobile: { max: 639, spacing: 0.15, fontSize: 0.025 },
         tablet: { max: 1023, spacing: 0.24, fontSize: 0.045 },
         desktop: { max: Infinity, spacing: 0.3, fontSize: 0.045 },
     };

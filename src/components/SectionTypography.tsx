@@ -26,8 +26,25 @@ export default function SectionTypography({
         large: { mobile: 0.2, tablet: 0.4, desktop: 0.7 },
     };
     
-    const { device } = useDevice();
-    const fontSize = DEVICE[size][device as "mobile" | "tablet" | "desktop"];
+    const { device, isMobile } = useDevice();
+    // Slightly reduce font sizes on mobile for denser layouts
+    const mobileScale = isMobile ? 0.85 : 1;
+    const fontSize = DEVICE[size][device as "mobile" | "tablet" | "desktop"] * mobileScale;
+
+    // Device-aware position offsets so we can move headers on mobile
+    const POSITION_OFFSETS: Record<string, [number, number, number]> = {
+        mobile: [0, -0.4, 10],
+        tablet: [0, -0.2, 11],
+        desktop: [0, 0, 12],
+    };
+
+    const basePos = POSITION_OFFSETS[device as "mobile" | "tablet" | "desktop"] || position;
+    // Merge provided position with the base per-device position (prefer explicit prop when provided)
+    const usedPosition: [number, number, number] = [
+        position?.[0] ?? basePos[0],
+        position?.[1] ?? basePos[1],
+        position?.[2] ?? basePos[2],
+    ];
     
     // If text is an array, render each line as a separate Text component for individual centering
     if (Array.isArray(text)) {
@@ -36,7 +53,7 @@ export default function SectionTypography({
                 {text.map((line, index) => (
                     <Text
                         key={index}
-                        position={[position[0], position[1] - (index * fontSize * 1.2), position[2]]}
+                        position={[usedPosition[0], usedPosition[1] - (index * fontSize * 1.2), usedPosition[2]]}
                         font="./assets/fonts/figtreeblack.ttf"
                         fontSize={fontSize}
                         letterSpacing={-0.05}
@@ -58,7 +75,7 @@ export default function SectionTypography({
     // Single line text
     return (
         <Text
-            position={position}
+            position={usedPosition}
             font="./assets/fonts/figtreeblack.ttf"
             fontSize={fontSize}
             letterSpacing={-0.05}

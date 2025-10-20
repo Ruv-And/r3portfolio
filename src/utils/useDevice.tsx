@@ -22,12 +22,10 @@ export default function useDevice() {
         };
 
         window.addEventListener("resize", onResize);
-        // also listen to orientationchange for some mobile browsers
-        window.addEventListener("orientationchange", onResize);
 
+        // Intentionally do NOT react to orientationchange, Layout should depend on dimensions
         return () => {
             window.removeEventListener("resize", onResize);
-            window.removeEventListener("orientationchange", onResize);
         };
     }, []);
 
