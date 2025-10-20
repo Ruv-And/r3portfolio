@@ -37,7 +37,7 @@ function App() {
     //   anisotropy: 0.01  
     // }}
     barProps={{
-      scale: 0.15,
+      // scale: 0.15,
       ior: 1.15,
       thickness: 5,
       chromaticAberration: 0.1,

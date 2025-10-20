@@ -1,7 +1,7 @@
 // Displays the user's name in stylized 3D text
 // SectionTypography: Flexible 3D text component for headings and sections
 
-import { useState, useEffect } from "react";
+import useDevice from "../utils/useDevice";
 import { Text } from "@react-three/drei";
 
 interface SectionTypographyProps {
@@ -26,20 +26,8 @@ export default function SectionTypography({
         large: { mobile: 0.2, tablet: 0.4, desktop: 0.7 },
     };
     
-    const getDevice = () => {
-        const w = window.innerWidth;
-        return w <= 639 ? "mobile" : w <= 1023 ? "tablet" : "desktop";
-    };
-    
-    const [device, setDevice] = useState<"mobile" | "tablet" | "desktop">(getDevice());
-    
-    useEffect(() => {
-        const onResize = () => setDevice(getDevice());
-        window.addEventListener("resize", onResize);
-        return () => window.removeEventListener("resize", onResize);
-    }, []);
-    
-    const fontSize = DEVICE[size][device];
+    const { device } = useDevice();
+    const fontSize = DEVICE[size][device as "mobile" | "tablet" | "desktop"];
     
     // If text is an array, render each line as a separate Text component for individual centering
     if (Array.isArray(text)) {

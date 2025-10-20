@@ -37,26 +37,47 @@ export default function SocialsComponent3D({
     const [hoveredSocial, setHoveredSocial] = useState<number | null>(null);
     const { viewport, camera } = useThree();
 
-    // Position the group in the bottom right corner of the screen
+    // Responsive breakpoints for different screen sizes
+    const DEVICE_BREAKPOINTS = {
+        mobile: { max: 639, marginX: 0.2, marginY: 0.15, spacing: 0.2, scale: 0.8 },
+        tablet: { max: 1023, marginX: 0.25, marginY: 0.17, spacing: 0.22, scale: 0.9 },
+        desktop: { max: Infinity, marginX: 0.35, marginY: 0.17, spacing: 0.25, scale: 1.0 },
+    };
+
+    const getDeviceSettings = () => {
+        const w = window.innerWidth;
+        return w <= DEVICE_BREAKPOINTS.mobile.max
+            ? DEVICE_BREAKPOINTS.mobile
+            : w <= DEVICE_BREAKPOINTS.tablet.max
+                ? DEVICE_BREAKPOINTS.tablet
+                : DEVICE_BREAKPOINTS.desktop;
+    };
+
+    // Position the group in the bottom right corner of the screen responsively
     useFrame(() => {
         if (!groupRef.current) return;
         
         const v = viewport.getCurrentViewport(camera, [0, 0, 15]);
+        const deviceSettings = getDeviceSettings();
         
-        // Position in bottom right corner with some margin
-        const marginX = .35; // Distance from right edge
-        const marginY = 0.17; // Distance from bottom edge
+        // Use responsive margins based on screen size
+        const marginX = deviceSettings.marginX;
+        const marginY = deviceSettings.marginY;
         
         groupRef.current.position.set(
             v.width / 2 - marginX,
             -v.height / 2 + marginY,
             15.1 // Slightly in front of other elements
         );
+
+        // Apply responsive scaling
+        groupRef.current.scale.setScalar(deviceSettings.scale);
     });
 
-    // Horizontal layout for the cards side by side
+    // Horizontal layout for the cards side by side with responsive spacing
     const getSocialPosition = (index: number): [number, number, number] => {
-        const spacing = 0.25; // Horizontal spacing between cards
+        const deviceSettings = getDeviceSettings();
+        const spacing = deviceSettings.spacing; // Responsive spacing between cards
         const x = (index - (socials.length - 1) / 2) * spacing; // Center the cards horizontally
         return [x, 0, 0];
     };
